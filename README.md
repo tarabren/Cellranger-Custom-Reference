@@ -3,7 +3,7 @@ This repo provides a workflow for adding a **custom gene** (e.g., a transgene or
 
 ---
 
-## 📦 Overview
+## Overview
 
 This workflow guides you through:
 
@@ -26,57 +26,63 @@ This workflow guides you through:
 
 ---
 
-## 🗂 File Descriptions
+## File Descriptions
 
 ### 🧬 Input Files
 - `your_construct.dna`: SnapGene format for the custom gene
-- `reference_genome.fa`: The reference FASTA (from 10x Genomics)
-- `genes.gtf`: The reference GTF file (from 10x Genomics)
+- `reference_genome/`: Directory for reference genome
+    - `reference_genome/fasta/genome.fa`: The reference FASTA (from 10x Genomics)
+    - `reference_genome/genes/genes.gtf`: The reference GTF file (from 10x Genomics)
 
 ### ⚙️ Scripts
 
-| Script | Description |
-|--------|-------------|
-| `scripts/extract_fasta_from_snapgene.py` | Extracts a DNA sequence from a SnapGene `.dna` file into FASTA format |
-| `scripts/parse_sam_to_gtf.py` | Parses a SAM file to identify exons and creates a GTF annotation |
-| `scripts/run_mkref.sh` | Builds a custom Cell Ranger reference using modified FASTA and GTF |
-| `scripts/run_counts.sh` | Runs `cellranger count` with the new custom reference |
-
+| Script | Description | Output |
+|--------|-------------|--------|
+| `scripts/extract_fasta_from_snapgene.py` | Extracts a DNA sequence from a SnapGene `.dna` file into FASTA format | custom_sequence.fasta |
+| `scripts/parse_sam.py` | Parses a SAM file to identify exons and creates a GTF annotation | custom_genes.gtf |
+| `scripts/run_mkref.sh` | Builds a custom Cell Ranger reference using modified FASTA and GTF | Custom_Ref/ |
 ---
 
-## 🚀 Quick Start
+## Workflow
 
-1. **Extract custom sequence:**
+1. **Extract custom sequence from snap file:**
 
     ```bash
-    python scripts/extract_fasta_from_snapgene.py --input your_construct.dna --output custom_sequence.fasta
+    module load python/3.12.2
+    python scripts/extract_fasta_from_snapgene.py
     ```
 
-2. **Align with minimap2:**
+2. **Add Custom Sequence to genome.fa File:**
 
     ```bash
-    minimap2 -ax splice reference_genome.fa custom_sequence.fasta > custom_aligned.sam
+    cat custom_sequence.fasta >> reference_genome/fasta/genome.fa
     ```
 
-3. **Parse alignment to GTF:**
+3. **Align with minimap2:**
 
     ```bash
-    python scripts/parse_sam_to_gtf.py --input custom_aligned.sam --output custom_genes.gtf
+    minimap2 -ax splice reference_genome/fasta/genome.fa custom_sequence.fasta > custom_aligned.sam
     ```
 
-4. **Update reference files:**
+    Check output:
+     ```bash
+    module load samtools
+    samtools view custom_aligned.sam | head -n 10
+    ```
+4. **Parse alignment and add to GTF:**
 
-    Append the custom sequence to your reference FASTA:
-
-    ```bash
-    cat custom_sequence.fasta >> path_to_cellranger_reference/fasta/genome.fa
+    ```python
+    python scripts/parse_sam.py
     ```
 
-    Decompress and append the custom GTF:
-
+    If your reference file is in .gz format, run the following to decompress it:
     ```bash
-    gunzip path_to_cellranger_reference/genes/genes.gtf.gz
-    cat custom_genes.gtf >> path_to_cellranger_reference/genes/genes.gtf
+    gunzip reference_genome/genes/genes.gtf.gz reference_genome/genes/genes.gtf
+    ```
+
+    Now add the custom gtf file to the reference
+    ```bash
+    cat custom_genes.gtf >> reference_genome/genes/genes.gtf
     ```
 
 5. **Rebuild the reference:**
@@ -85,11 +91,6 @@ This workflow guides you through:
     bash scripts/run_mkref.sh
     ```
 
-6. **Run Cell Ranger count:**
-
-    ```bash
-    bash scripts/run_counts.sh
-    ```
-
+You're custom reference has been added! 
 
 
