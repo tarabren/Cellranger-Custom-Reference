@@ -1,8 +1,8 @@
 from Bio import SeqIO
 
 # Define file paths
-input_file = "Runx2_isoform1_IRES_GFP_cdna.dna"  # Your SnapGene file
-output_fasta = "RUNX2_GFP_sequence.fasta"  # Output FASTA file
+input_file = "your_construct.dna"  # Your SnapGene file
+output_fasta = "custom_sequence.fasta"  # Output FASTA file
 
 # Read the SnapGene file and extract the sequence
 with open(input_file, "rb") as file:

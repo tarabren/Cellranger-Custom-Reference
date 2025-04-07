@@ -2,10 +2,10 @@ import re
 import pysam
 
 # Input and output file paths
-sam_file = "runx2_gfp_aligned.sam"
+sam_file = "custom_aligned.sam"
 gtf_file = "custom_genes.gtf"
-gene_name = "RUNX2_GFP"
-transcript_id = "RUNX2_GFP.1"
+gene_name = "Custom Gene"
+transcript_id = ""
 
 # Function to parse the CIGAR string and extract exon positions
 def parse_cigar(start, cigar):

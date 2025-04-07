@@ -8,7 +8,7 @@
 module load cellranger
 
 cellranger mkref --genome=Custom_Ref \
-                 --fasta=/genome.fa \
-                 --genes=/genes.gtf
+                 --fasta=/reference_genome/fasta/genome.fa \
+                 --genes=/reference_genome/genes/genes.gtf
 
 echo "✅ Cell Ranger reference creation completed!"
