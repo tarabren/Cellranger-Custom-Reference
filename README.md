@@ -72,7 +72,7 @@ This workflow guides you through:
 4. **Parse alignment and add to GTF:**
 
     ```python
-    python scripts/parse_sam.py
+    python scripts/parse_sam.py --gene_name your_gene_name --transcript_id your_transcript_id
     ```
 
     If your reference file is in .gz format, run the following to decompress it:
